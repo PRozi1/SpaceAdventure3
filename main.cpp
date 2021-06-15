@@ -82,11 +82,13 @@ class Spacecraft : public Game_objects
 public:
     int angle = 0;
     int hp_;
+    int bulletPower_;
     Spacecraft(const std::string filename) : Game_objects(filename){
         texture_.loadFromFile(filename);
         sprite_.setTexture(texture_);
         is_alive_ = true;
         hp_ = 100;
+        bulletPower_ = 20;
     }
 };
 
@@ -109,10 +111,8 @@ public:
 
     int powerSpaceCraft_;
     int powerEnemy_;
-    Bullet(const std::string &filename) : Game_objects(filename){
+    Bullet(const std::string &filename, int powerSpaceCraft = 20, int powerEnemy = 10) : Game_objects(filename), powerSpaceCraft_(powerSpaceCraft), powerEnemy_(powerEnemy){
         is_alive_ = true;
-        powerSpaceCraft_ = 20;
-        powerEnemy_ = 10;
     };
     void removeBulletsOverWindow(std::vector<Bullet*> &v, sf::RenderWindow &w){
         if (sprite_.getPosition().x < 0 || sprite_.getPosition().x > w.getSize().x || sprite_.getPosition().y < 0
@@ -219,9 +219,26 @@ public:
 
 class Gift : public Game_objects
 {
+public:
+int updateHp_;
+int updateBullet_;
+Gift (const std::string filename, int updateHp = 0, int updateBullet = 0) : Game_objects(filename), updateHp_(updateHp), updateBullet_(updateBullet){
+    is_alive_ = true;
+};
+void setRandomPosition(sf::RenderWindow &w){
+    sprite_.setPosition(rand() % w.getSize().x, rand() % w.getSize().y);
+};
+
 
 };
 
+void intersect_spacecraft_gift(Spacecraft *s, Gift *g){
+    if (s->sprite_.getGlobalBounds().intersects(g->sprite_.getGlobalBounds()) && s->is_alive_ && g-> is_alive_){
+        s->hp_ += g->updateHp_;
+        s->bulletPower_ += g->updateBullet_;
+        g->is_alive_ = false;
+    }
+}
 
 void intersects_spacecraft_asteroid(Spacecraft *s, std::vector<Asteroid*> &a){
     for(size_t i = 0; i < a.size(); i++){
@@ -337,10 +354,16 @@ std::vector<Bullet*> bullets_enemy;
 std::vector<Asteroid*> asteroids;
 std::vector<Asteroid*> asteroids_indestructible;
 std::vector<EnemyShip*> enemies;
+std::vector<Gift*> gifts;
+
 
 Spacecraft *s = new Spacecraft("spacecraft.png");
 s->sprite_.setRotation(90);
 s->sprite_.setPosition(window.getSize().x/2, window.getSize().y/2);
+
+
+//Gift *g = new Gift("update_bullet.png", 50);
+//g->setRandomPosition(window);
 
 while (window.isOpen()) {
 
@@ -360,20 +383,16 @@ while (window.isOpen()) {
         move_d = true;
         }
         if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::D){
-//        move_u = true;
-//        move_d = true;
         s->angle += ang;
         s->sprite_.rotate(ang);
         }
 
         if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::A ){
-//        move_d = true;
-//        move_u = true;
         s->angle -= ang;
         s->sprite_.rotate(-ang);
         }
         if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space){
-        Bullet *b = new Bullet("bullet.png");
+        Bullet *b = new Bullet("bullet.png", s->bulletPower_);
         b->sprite_.setPosition(s->sprite_.getPosition().x, s->sprite_.getPosition().y - 10);
         b->move_x = 10*cos(s->angle*DTR);
         b->move_y = 10*sin(s->angle*DTR);
@@ -392,7 +411,11 @@ s->sprite_.move(10*cos(s->angle*DTR), 10*sin(s->angle*DTR));
 if(move_d){
 s->sprite_.move(-10*cos(s->angle*DTR), -10*sin(s->angle*DTR));
 }
-
+if(s->hp_ < 90 && gifts.size() < 1){
+Gift *g = new Gift("live.png", 50);
+g->setRandomPosition(window);
+gifts.emplace_back(g);
+}
 
 //std::cout << s->sprite_.getOrigin().x << " ; " << s->sprite_.getOrigin().y << std::endl;
 if(asteroids.size() < 5 && accumulated_time > 100){
@@ -451,6 +474,15 @@ for(auto *b : bullets){
    intersects_bullets_enemies(b, enemies);
    intersects_bullets_bullets(b, bullets_enemy);
 }}
+for( size_t i = 0; i < gifts.size(); i++){
+if(gifts.at(i)->is_alive_){
+gifts.at(i)->_draw(window);
+}
+intersect_spacecraft_gift(s , gifts.at(i));
+if(!gifts.at(i)->is_alive_){
+    gifts.erase(gifts.begin()+i);
+}}
+
 
 for(auto *a : asteroids){
    a->sprite_.move(a->move_x,a->move_y);
@@ -481,6 +513,7 @@ for(auto *ain : asteroids_indestructible){
     intersects_asteroidIndestructible_bullets(ain, bullets_enemy);
     intersects_asteroidIndestructible_spacecraft(ain, s);
 }
+
 for(auto *e : enemies){
 //   if(s->sprite_.getPosition().y < e->sprite_.getPosition().y){
 //   e->_move(-3,-3);
@@ -519,6 +552,7 @@ intersects_spacecraft_enemy(s, enemies);
 if(s->is_alive_){
 s->_draw(window);
 }
+
 std::cout <<"s -> hp: " << s->hp_ << std::endl;
 
 window.display();
