@@ -4,6 +4,8 @@
 #include <vector>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
+#include <fstream>
+
 #define DTR  0.0174532925     // change degrees to radians
 
 
@@ -37,29 +39,52 @@ public:
     void _getPosition(Game_objects *g){
         sprite_.setPosition(g->sprite_.getPosition().x, g->sprite_.getPosition().y);
     }
-    void setMove(sf::RenderWindow &w){
+    void setMove(sf::RenderWindow &w, std::vector<int> p){
         int value = rand() % 4;
         if(value == 0){
         sprite_.setPosition(w.getSize().x, rand()%w.getSize().y);
-        move_x = -8;
+        move_x = -p.at(12);
         move_y = 0;
         }
         if(value == 1){
         sprite_.setPosition(rand()%w.getSize().x, 0);
         move_x = 0;
-        move_y = 8;
+        move_y = p.at(12);
         }
         if(value == 2){
         sprite_.setPosition(0, rand()%w.getSize().y);
-        move_x = 8;
+        move_x = p.at(12);
         move_y = 0;
         }
         if(value == 3){
         sprite_.setPosition(rand()%w.getSize().x, w.getSize().y);
         move_x = 0;
-        move_y = -8;
+        move_y = -p.at(12);
         }
     }
+//    void setMoveAsteroidIndesctutibile(sf::RenderWindow &w, std::vector<int> p){
+//        int value = rand() % 4;
+//        if(value == 0){
+//        sprite_.setPosition(w.getSize().x, rand()%w.getSize().y);
+//        move_x = -p.at(13);
+//        move_y = 0;
+//        }
+//        if(value == 1){
+//        sprite_.setPosition(rand()%w.getSize().x, 0);
+//        move_x = 0;
+//        move_y = p.at(13);
+//        }
+//        if(value == 2){
+//        sprite_.setPosition(0, rand()%w.getSize().y);
+//        move_x = p.at(13);
+//        move_y = 0;
+//        }
+//        if(value == 3){
+//        sprite_.setPosition(rand()%w.getSize().x, w.getSize().y);
+//        move_x = 0;
+//        move_y = -p.at(13);
+//        }
+//    }
     void outsideObject(sf::RenderWindow &w){
         if(sprite_.getPosition().x < 0){
         _setPosition(w.getSize().x, rand()%w.getSize().y);
@@ -98,11 +123,58 @@ public:
 
     bool is_indestructible_;
     int asteroidPower_;
+    int asteroidPowerInestructible_;
     Asteroid(const std::string &filename, bool is_indestructible = false) :  Game_objects(filename), is_indestructible_(is_indestructible){
         is_alive_ = true;
-        asteroidPower_ = 50;
+//        asteroidPower_ = 35;
+//        asteroidPowerInestructible_ = 100;
     };
-
+    void setMoveAsteroidIndesctutibile(sf::RenderWindow &w, std::vector<int> p){
+        int value = rand() % 4;
+        if(value == 0){
+        sprite_.setPosition(w.getSize().x, rand()%w.getSize().y);
+        move_x = -p.at(13);
+        move_y = 0;
+        }
+        if(value == 1){
+        sprite_.setPosition(rand()%w.getSize().x, 0);
+        move_x = 0;
+        move_y = p.at(13);
+        }
+        if(value == 2){
+        sprite_.setPosition(0, rand()%w.getSize().y);
+        move_x = p.at(13);
+        move_y = 0;
+        }
+        if(value == 3){
+        sprite_.setPosition(rand()%w.getSize().x, w.getSize().y);
+        move_x = 0;
+        move_y = -p.at(13);
+        }
+    }
+    void setMoveAsteroid(sf::RenderWindow &w, std::vector<int> p){
+        int value = rand() % 4;
+        if(value == 0){
+        sprite_.setPosition(w.getSize().x, rand()%w.getSize().y);
+        move_x = -p.at(12);
+        move_y = 0;
+        }
+        if(value == 1){
+        sprite_.setPosition(rand()%w.getSize().x, 0);
+        move_x = 0;
+        move_y = p.at(12);
+        }
+        if(value == 2){
+        sprite_.setPosition(0, rand()%w.getSize().y);
+        move_x = p.at(12);
+        move_y = 0;
+        }
+        if(value == 3){
+        sprite_.setPosition(rand()%w.getSize().x, w.getSize().y);
+        move_x = 0;
+        move_y = -p.at(12);
+        }
+    }
 };
 
 class Bullet : public Game_objects
@@ -127,24 +199,26 @@ class EnemyShip : public Game_objects
 {
 public:
     int hp_;
+    int EnemyShipPower_;
     float bulletsMoveX_;
     float bulletsMoveY_;
     EnemyShip(const std::string filename) : Game_objects(filename){
         is_alive_ = true;
         hp_ = 100;
+        EnemyShipPower_ = 60;
     };
-    void setMoveEnemy(Spacecraft *s, sf::RenderWindow &w){
+    void setMoveEnemy(Spacecraft *s, sf::RenderWindow &w, std::vector<int> &p){
         int value = rand() % 4;
         if(value == 0){
         sprite_.setPosition(w.getSize().x, rand()%w.getSize().y);
-        bulletsMoveX_ = -5;
+        bulletsMoveX_ = -p.at(14);
         bulletsMoveY_ = 0;
-        move_x = -5;
+        move_x = -p.at(13);
         if (s->sprite_.getPosition().y > sprite_.getPosition().y){
-        move_y = 5;
+        move_y = p.at(13);
         }
         if (s->sprite_.getPosition().y < sprite_.getPosition().y){
-        move_y = -5;
+        move_y = -p.at(13);
         }
         if (s->sprite_.getPosition().y == sprite_.getPosition().y){
         move_y = 0;
@@ -154,31 +228,31 @@ public:
         sprite_.setPosition(rand()%w.getSize().x, 0);
         sprite_.rotate(270);
         bulletsMoveX_ = 0;
-        bulletsMoveY_ = 5;
+        bulletsMoveY_ = p.at(14);
         if (s->sprite_.getPosition().x > sprite_.getPosition().y){
-        move_x = 5;
+        move_x = p.at(13);
         }
         if (s->sprite_.getPosition().y < sprite_.getPosition().y){
-        move_x = -5;
+        move_x = -p.at(13);
         }
         if (s->sprite_.getPosition().y == sprite_.getPosition().y){
         move_x = 0;
         }
-        move_y = 5;
+        move_y = p.at(13);
         }
         if(value == 2){
         sprite_.setPosition(0, rand()%w.getSize().y);
         sprite_.rotate(180);
-        bulletsMoveX_ = 5;
+        bulletsMoveX_ = p.at(14);
         bulletsMoveY_ = 0;
-        move_x = -5;
+        move_x = -p.at(13);
         sprite_.setPosition(w.getSize().x, rand()%w.getSize().y);
-        move_x = -5;
+        move_x = -p.at(13);
         if (s->sprite_.getPosition().y > sprite_.getPosition().y){
-        move_y = 5;
+        move_y = p.at(13);
         }
         if (s->sprite_.getPosition().y < sprite_.getPosition().y){
-        move_y = -5;
+        move_y = -p.at(13);
         }
         if (s->sprite_.getPosition().y == sprite_.getPosition().y){
         move_y = 0;
@@ -188,17 +262,17 @@ public:
         sprite_.setPosition(rand()%w.getSize().x, w.getSize().y);
         sprite_.rotate(90);
         bulletsMoveX_ = 0;
-        bulletsMoveY_ = -5;
+        bulletsMoveY_ = -p.at(14);
         if (s->sprite_.getPosition().x > sprite_.getPosition().y){
-        move_x = 5;
+        move_x = p.at(13);
         }
         if (s->sprite_.getPosition().y < sprite_.getPosition().y){
-        move_x = -5;
+        move_x = -p.at(13);
         }
         if (s->sprite_.getPosition().y == sprite_.getPosition().y){
         move_x = 0;
         }
-        move_y = -5;
+        move_y = -p.at(13);
         }
     }
     void UpdateRotation(sf::RenderWindow &w){
@@ -265,9 +339,12 @@ void intersects_spacecraft_bullet(Spacecraft *s, std::vector<Bullet*> &b){
 void intersects_spacecraft_enemy(Spacecraft *s, std::vector<EnemyShip*> &e){
     for(size_t i = 0; i < e.size(); i++){
        if(s->sprite_.getGlobalBounds().intersects(e.at(i)->sprite_.getGlobalBounds()) && s->is_alive_ && e.at(i)->is_alive_){
-       s->is_alive_ = false;
+       s->hp_ -= e.at(i)->EnemyShipPower_;
        e.at(i)->is_alive_ = false;
-       std::cout << "Game over!" << std::endl;
+       if(s->hp_ <= 0){
+           s->is_alive_ = false;
+           std::cout << "Game over!" << std::endl;
+       }
        }}
 }
 
@@ -323,31 +400,118 @@ void intersects_asteroidIndestructible_asteroids(Asteroid *a, std::vector<Astero
 }
 void intersects_asteroidIndestructible_spacecraft(Asteroid *a, Spacecraft *s){
        if(a->sprite_.getGlobalBounds().intersects(s->sprite_.getGlobalBounds()) && s->is_alive_){
-           s->is_alive_ = false;
-           s->hp_ = 0;
+           s->hp_ -= a->asteroidPowerInestructible_;
+           if(s->hp_ <= 0){
+               s->is_alive_ = false;
+
            std::cout << "Game over!" << std::endl;
-       }}
+       }}}
+
+
+
+std::vector<int> loadParametesFromFile(const std::string &filename){
+    std::vector<int> parameters;
+    std::fstream file;
+    int skip_line = 0;
+    int parameter;
+    std::string line;
+    file.open(filename, std::ios::in);
+    if(file.good() == true)
+       {
+           while(!file.eof())
+           {
+               for(int i = 0; i <= skip_line; i++){
+                   std::getline(file,line);
+               }
+               std::getline(file,line);
+               parameter = std::stoi(line);
+               parameters.emplace_back(parameter);
+           }
+           file.close();
+       }
+    else{
+        std::cout<< "NIE UDALO SIE WCZYTAC PLIKU" << std::endl;
+    }
+return parameters;
+}
+
+std::vector<int> chooseLevel(){
+    std::vector<int> paramterers;
+    std::cout<< "Choose the level of the game: " <<std::endl;
+    std::cout << " 1 - EASY level " << std::endl;
+    std::cout << " 2 - MEDIUM level " << std::endl;
+    std::cout << " 3 - HARD level " << std::endl;
+    int choose;
+    std::cout << "Your choose: " ; std::cin >> choose;
+    switch(choose){
+    case 1:
+    paramterers = loadParametesFromFile("level_easy.txt");
+        break;
+    case 2:
+    paramterers = loadParametesFromFile("level_medium.txt");
+        break;
+    case 3:
+    paramterers = loadParametesFromFile("level_easy.txt");
+        break;
+    default:
+    std::cout << "YOU CHOOSE INCORRECT NUMBER!" << std::endl;
+        break;
+}
+return paramterers;
+}
+
+std::vector<int> chooseLevel1(sf::Sprite &s1,sf::Sprite &s2, sf::Sprite &s3, sf::Vector2f &mp){
+    std::vector<int> parameters;
+    sf::FloatRect Bounds1 = s1.getGlobalBounds();
+    sf::FloatRect Bounds2 = s2.getGlobalBounds();
+    sf::FloatRect Bounds3 = s3.getGlobalBounds();
+    if(mp.x < Bounds1.left + Bounds1.width && mp.x > Bounds1.left &&
+            mp.y < Bounds1.top + Bounds1.height && mp.y > Bounds1.height){
+     parameters = loadParametesFromFile("level_easy.txt");
+    }
+    if(mp.x < Bounds2.left + Bounds2.width && mp.x > Bounds2.left &&
+            mp.y < Bounds2.top + Bounds2.height && mp.y > Bounds2.height){
+     parameters = loadParametesFromFile("level_medium.txt");
+    }
+    if(mp.x < Bounds3.left + Bounds3.width && mp.x > Bounds3.left &&
+            mp.y < Bounds3.top + Bounds3.height && mp.y > Bounds3.height){
+     parameters = loadParametesFromFile("level_hard.txt");
+    }
+return parameters;
+}
+
+
 
 int main(){
 
-int length_of_window = 1500;
-int height_of_window = 1100;
+int length_of_window = 1400;
+int height_of_window = 900;
 int ang = 3;
+sf::RenderWindow end_window(sf::VideoMode(800, 500), "Try again");
 sf::RenderWindow window(sf::VideoMode(length_of_window, height_of_window), "Space Aventure!");
+sf::RenderWindow begin_window(sf::VideoMode(1000, 800), "Welcome in my game!");
+sf::Font font;
+font.loadFromFile("Times_New_Normal_Regular.ttf");
+
+
 sf::Clock clock;
 
 sf::Texture background;
-background.loadFromFile("background1.png");
+background.loadFromFile("background2.png");
 background.setRepeated(true);
 sf::Sprite sprite_background;
 sprite_background.setTexture(background);
 sprite_background.setTextureRect(sf::IntRect(0, 0, window.getSize().x, window.getSize().y));
+
+std::vector<int> parameters = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+//parameters = chooseLevel();
 
 
 float accumulated_time = 0;
 float accumulated_time1 = 0;
 float accumulated_time2 = 0;
 float accumulated_time3 = 0;
+int licznik = 0;
 
 std::vector<Bullet*> bullets;
 std::vector<Bullet*> bullets_enemy;
@@ -356,21 +520,105 @@ std::vector<Asteroid*> asteroids_indestructible;
 std::vector<EnemyShip*> enemies;
 std::vector<Gift*> gifts;
 
+sf::Vector2f mouse_position;
+
+sf::Texture image1;
+image1.loadFromFile("legenda.png");
+sf::Sprite image1_;
+image1_.setTexture(image1);
+
+sf::Texture image2;
+image2.loadFromFile("sterowanie.png");
+sf::Sprite image2_;
+image2_.setTexture(image2);
+
+sf::Texture levelEasy;
+levelEasy.loadFromFile("level_easy.png");
+sf::Sprite levelEasy_;
+levelEasy_.setTexture(levelEasy);
+levelEasy_.setOrigin(300, 75);
+levelEasy_.setPosition(500, 300);
+
+
+sf::Texture levelMedium;
+levelMedium.loadFromFile("level_medium.png");
+sf::Sprite levelMedium_;
+levelMedium_.setTexture(levelMedium);
+levelMedium_.setOrigin(300, 75);
+levelMedium_.setPosition(500, 450);
+
+sf::Texture levelHard;
+levelHard.loadFromFile("level_hard.png");
+sf::Sprite levelHard_;
+levelHard_.setTexture(levelHard);
+levelHard_.setOrigin(300, 75);
+levelHard_.setPosition(500, 600);
+
+int licznik_image = 0;
+std::vector<int> parametersX;
+
+
+while (begin_window.isOpen()) {
+bool skip_image = false;
+    sf::Event event;
+    while (begin_window.pollEvent(event)) {
+        if (event.type == sf::Event::Closed){
+        window.close();
+        }
+        if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left ){
+          mouse_position = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+        begin_window.close();
+        }
+        if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Enter ){
+        skip_image = true;
+        licznik_image++;
+        }
+}
+
+begin_window.clear(sf::Color::Black);
+begin_window.setFramerateLimit(30);
+
+sf::Text text;
+text.setString("WYBIERZ POZIOM GRY");
+text.setPosition(300, 70);
+text.setFont(font);
+text.setFillColor(sf::Color::White);
+text.setCharacterSize(40);
+text.setStyle(sf::Text::Bold);
+
+if(licznik_image == 0){
+begin_window.draw(image1_);
+}
+if(licznik_image == 1){
+begin_window.draw(image2_);
+}
+if(licznik_image > 1){
+begin_window.draw(text);
+
+begin_window.draw(levelEasy_);
+begin_window.draw(levelMedium_);
+begin_window.draw(levelHard_);
+parametersX = chooseLevel1(levelEasy_, levelMedium_, levelHard_, mouse_position);
+
+}
+begin_window.display();
+for(size_t i = 0; i < parametersX.size(); i++){
+    parameters.at(i) = parametersX.at(i);
+    std::cout << parameters.at(i) << " --" << std::endl;
+    std::cout << parametersX.at(i) << " ++" << std::endl;
+}
+}
 
 Spacecraft *s = new Spacecraft("spacecraft.png");
+s->hp_ = parameters.at(0);
 s->sprite_.setRotation(90);
 s->sprite_.setPosition(window.getSize().x/2, window.getSize().y/2);
 
-
-//Gift *g = new Gift("update_bullet.png", 50);
-//g->setRandomPosition(window);
-
+int score = 0;
 while (window.isOpen()) {
 
     bool move_u = false;
     bool move_d = false;
-
-
     sf::Event event;
     while (window.pollEvent(event)) {
         if (event.type == sf::Event::Closed){
@@ -392,14 +640,16 @@ while (window.isOpen()) {
         s->sprite_.rotate(-ang);
         }
         if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space){
-        Bullet *b = new Bullet("bullet.png", s->bulletPower_);
-        b->sprite_.setPosition(s->sprite_.getPosition().x, s->sprite_.getPosition().y - 10);
+        Bullet *b = new Bullet("bullet.png", s->bulletPower_ = parameters.at(2));
+        b->sprite_.setPosition(s->sprite_.getPosition().x - 1, s->sprite_.getPosition().y - 10);
         b->move_x = 10*cos(s->angle*DTR);
         b->move_y = 10*sin(s->angle*DTR);
         bullets.emplace_back(b);
+        licznik++;
 
         }
     }
+score += clock.getElapsedTime().asSeconds();
 window.setFramerateLimit(30);
 window.clear(sf::Color::Black);
 window.draw(sprite_background);
@@ -411,34 +661,47 @@ s->sprite_.move(10*cos(s->angle*DTR), 10*sin(s->angle*DTR));
 if(move_d){
 s->sprite_.move(-10*cos(s->angle*DTR), -10*sin(s->angle*DTR));
 }
-if(s->hp_ < 90 && gifts.size() < 1){
-Gift *g = new Gift("live.png", 50);
+
+if(s->hp_ < 30 && gifts.size() < 1){
+Gift *g = new Gift("live.png", parameters.at(9));
 g->setRandomPosition(window);
 gifts.emplace_back(g);
 }
 
+if(licznik == 30 && gifts.size() < 2){
+Gift *gf = new Gift("update_bullet.png",0,parameters.at(10));
+gf->setRandomPosition(window);
+gifts.emplace_back(gf);
+licznik = 0;
+}
+
 //std::cout << s->sprite_.getOrigin().x << " ; " << s->sprite_.getOrigin().y << std::endl;
-if(asteroids.size() < 5 && accumulated_time > 100){
+if(asteroids.size() <= parameters.at(7) && accumulated_time > 100){
     Asteroid *a = new Asteroid("asteroid.png");
-    a->setMove(window);
+    a->asteroidPower_ = parameters.at(4);
+    //a->sprite_.move(parameters.at(12), parameters.at(12));
+    a->setMoveAsteroid(window, parameters);
     asteroids.emplace_back(a);
     accumulated_time = 0;
 }
 else{
     accumulated_time += clock.getElapsedTime().asSeconds();
 }
-if(asteroids_indestructible.size() < 4 && accumulated_time3 > 300){
+if(asteroids_indestructible.size() <= parameters.at(8) && accumulated_time3 > 300){
     Asteroid *ain = new Asteroid("asteroid_indestructible.png", true);
-    ain->setMove(window);
+    ain->setMoveAsteroidIndesctutibile(window, parameters);
+    ain->asteroidPowerInestructible_ = parameters.at(0);
     asteroids_indestructible.emplace_back(ain);
     accumulated_time3 = 0;
 }
 else{
     accumulated_time3 += clock.getElapsedTime().asSeconds();
 }
-if(enemies.size() < 2 && accumulated_time1 > 1000 ){
+if(enemies.size() <= parameters.at(7) && accumulated_time1 > 1000 ){
     EnemyShip *e = new EnemyShip("enemy.png");
-    e->setMoveEnemy(s, window);
+    e->hp_ = parameters.at(1);
+    e->EnemyShipPower_ = parameters.at(3);
+    e->setMoveEnemy(s, window, parameters);
     enemies.emplace_back(e);
     accumulated_time1 = 0;
 
@@ -541,6 +804,9 @@ for(auto *be : bullets_enemy){
   be->removeBulletsOverWindow(bullets_enemy, window);
 }
 
+
+
+
 std::cout << "bullets size" << bullets.size() << std::endl;
 std::cout << "bullets_enemy size" << bullets_enemy.size() << std::endl;
 
@@ -549,14 +815,128 @@ std::cout << "bullets_enemy size" << bullets_enemy.size() << std::endl;
 intersects_spacecraft_asteroid(s, asteroids);
 intersects_spacecraft_bullet(s, bullets_enemy);
 intersects_spacecraft_enemy(s, enemies);
+
+
 if(s->is_alive_){
 s->_draw(window);
 }
+else{
+    window.close();
+}
 
+
+std::vector<sf::Text> texts(5);
+std::string lifeSpaceCraft, bulletSpaceCraft, nextupdate;
+int nextupdate_ = 30 - licznik;
+nextupdate = std::to_string(nextupdate_);
+lifeSpaceCraft = std::to_string(s->hp_);
+bulletSpaceCraft = std::to_string(s->bulletPower_);
+{
+sf::Text text;
+text.setString("Zycia:  ");
+text.setPosition(50, window.getSize().y - 50);
+texts.emplace_back(text);
+}
+{
+sf::Text text;
+text.setString(lifeSpaceCraft);
+text.setPosition(160, window.getSize().y - 50);
+texts.emplace_back(text);
+}
+{
+sf::Text text;
+text.setString("Moc pociskow:  ");
+text.setPosition(300, window.getSize().y - 50);
+texts.emplace_back(text);
+}
+{
+sf::Text text;
+text.setString(bulletSpaceCraft);
+text.setPosition(580, window.getSize().y - 50);
+texts.emplace_back(text);
+}
+{
+sf::Text text;
+text.setString("Nastepny updagte pociskow: ");
+text.setPosition(700, window.getSize().y - 50);
+texts.emplace_back(text);
+}
+{
+sf::Text text;
+text.setString(nextupdate);
+text.setPosition(1210, window.getSize().y - 50);
+texts.emplace_back(text);
+}
+
+for(size_t i = 0; i < texts.size()  ; i++){
+    texts.at(i).setFont(font);
+    texts.at(i).setFillColor(sf::Color::White);
+    texts.at(i).setCharacterSize(40);
+    texts.at(i).setStyle(sf::Text::Bold);
+}
+for(auto &i : texts){
+window.draw(i);
+}
 std::cout <<"s -> hp: " << s->hp_ << std::endl;
-
 window.display();
+}
 
+
+
+
+while (end_window.isOpen()) {
+    sf::Event event;
+    while (begin_window.pollEvent(event)) {
+        if (event.type == sf::Event::Closed){
+        window.close();
+        }
+        if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Enter ){
+        end_window.close();
+        }
+}
+
+end_window.clear(sf::Color::Black);
+end_window.setFramerateLimit(30);
+
+sf::Text text, text1, text2, text3;;
+text.setString("GAME OVER");
+text.setPosition(250, 70);
+text.setFont(font);
+text.setFillColor(sf::Color::White);
+text.setCharacterSize(60);
+text.setStyle(sf::Text::Bold);
+
+text1.setString("Wcisnij ENTER zeby zakonczyc");
+text1.setPosition(200, 400);
+text1.setFont(font);
+text1.setFillColor(sf::Color::White);
+text1.setCharacterSize(32);
+text1.setStyle(sf::Text::Bold);
+
+text2.setString("Twoj wynik: ");
+text2.setPosition(250, 200);
+text2.setFont(font);
+text2.setFillColor(sf::Color::White);
+text2.setCharacterSize(32);
+text2.setStyle(sf::Text::Bold);
+
+std::string score1 = std::to_string(score);
+text3.setString(score1);
+text3.setPosition(500, 200);
+text3.setFont(font);
+text3.setFillColor(sf::Color::White);
+text3.setCharacterSize(32);
+text3.setStyle(sf::Text::Bold);
+
+
+
+
+end_window.draw(text);
+end_window.draw(text1);
+end_window.draw(text2);
+end_window.draw(text3);
+
+end_window.display();
 }
 
 return 0;
