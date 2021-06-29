@@ -1,0 +1,34 @@
+Liczba HP statku SpaceCraft:
+80
+Liczba HP statku EnemySpaceCraft:
+80
+Licza HP odbierana przez pocisk SpaceCraft:
+15
+Licza HP odbierana przez pocisk EnemySpaceCraft:
+10
+Licza HP odbierana przez zderzenie sie z asteroida:
+40
+Licza HP odbierana przez zderzenie sie z EnemySpaceCraft:
+60
+Licza asteroid w grze:
+7
+Liczba statków EnemySpaceCraft:
+3
+Liczba asteroid niezniszczalnych:
+5
+Liczba HP dodawana przy kolizji z obiektem dodajacym zycia:
+25
+Update pociskow zwiekszanych przy kolizji z obiektem dodajacym moc pociskow SpaceCraft:
+15
+Predkosc poruszania sie asteroid
+10
+Predkosc poruszania sie asteroid niezniszczalnych
+8
+Predkosc poruszania sie statkow EnemySpaceCraft
+9
+Predkosc poruszania sie pociskow statkow EnemySpaceCraft
+7
+Liczba strzałów potrzebna do update pocisków:
+40
+Minimalna wartosc HP potrzeba do pojawienia sie update zycia:
+50
